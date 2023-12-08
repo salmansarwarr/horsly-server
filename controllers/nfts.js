@@ -5,14 +5,14 @@ dotenv.config();
 
 // Optional Config object, but defaults to demo api-key and eth-mainnet.
 const settings = {
-    apiKey: process.env.ALCHEMY_API, 
-    network: Network.ETH_SEPOLIA, 
+    apiKey: process.env.ALCHEMY_API,
+    network: Network.ETH_SEPOLIA,
 };
 
 const alchemy = new Alchemy(settings);
 
 export const getOwnedNfts = async (req, res) => {
-    const { owner, contractAddress } = req.body;
+    const { contractAddress, owner } = req.params;
 
     try {
         const nfts = await alchemy.nft.getNftsForOwner(owner, {
@@ -29,8 +29,7 @@ export const getOwnedNfts = async (req, res) => {
 };
 
 export const getNftDetails = async (req, res) => {
-    const { contractAddress } = req.body;
-    const { tokenId } = req.params;
+    const { contractAddress, tokenId } = req.params;
 
     try {
         const nftDetails = await alchemy.nft.getNftMetadata(

@@ -3,7 +3,7 @@ import { getNftDetails, getOwnedNfts } from '../controllers/nfts.js';
 
 const router = express.Router();
 
-router.post('/owned', getOwnedNfts);
-router.post('/:tokenId', getNftDetails);
+router.get('/owned/:contractAddress/:owner', getOwnedNfts);
+router.get('/:contractAddress/:tokenId', getNftDetails);
 
 export default router;
