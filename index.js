@@ -25,5 +25,5 @@ app.use("/nfts", nftRoutes);
 app.get("/", (req, res) => res.send("App is running"));
 
 app.listen(process.env.PORT || 3000, () =>
-    console.log(`Server listening on port ${process.env.PORT || "3000"}`)
+    console.log(`Server listening on port ${process.env.PORT || "4000"}`)
 );
