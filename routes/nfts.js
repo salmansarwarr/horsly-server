@@ -36,12 +36,11 @@ export default router;
  *         image:
  *           type: string
  *           description: The URL of the image representing the NFT.
- *         // Add more properties based on your actual NFT structure.
  */
 
 /**
  * @swagger
- * /api/nfts/owned/{contractAddress}/{owner}:
+ * /nfts/owned/{contractAddress}/{owner}:
  *   get:
  *     summary: Get NFTs owned by a specific address
  *     tags: [NFTs]
@@ -81,7 +80,7 @@ export default router;
 
 /**
  * @swagger
- * /api/nfts/{contractAddress}/{tokenId}:
+ * /nfts/{contractAddress}/{tokenId}:
  *   get:
  *     summary: Get details of a specific NFT
  *     tags: [NFTs]

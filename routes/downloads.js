@@ -5,17 +5,21 @@ import {
     getAllDownloads,
     getDownloadsByOwner,
     getDownloadsByTokenId,
+    deleteDownloadsByType,
+    getDownloadsByTokenType,
     insertDownload,
 } from "../controllers/downloads.js";
 
 const router = express.Router();
 
 router.get("/", getAllDownloads);
-router.get("/:ownerAddress", getDownloadsByOwner);
-router.get("/:tokenId", getDownloadsByTokenId);
+router.get("/getByOwner/:ownerAddress", getDownloadsByOwner);
+router.get("/getById/:tokenId", getDownloadsByTokenId);
 router.post("/", insertDownload);
 router.delete("/deleteById/:tokenId", deleteDownloadsByTokenId);
-router.delete("/deleteByAddress/:ownerAddress", deleteDownloadsByOwner);
+router.delete("/deleteByOwner/:ownerAddress", deleteDownloadsByOwner);
+router.get("/getByType/:type", getDownloadsByTokenType);
+router.delete("/deleteByType/:type", deleteDownloadsByType);
 
 export default router;
 
@@ -88,7 +92,7 @@ export default router;
 
 /**
  * @swagger
- * /downloads/{ownerAddress}:
+ * /downloads/getByOwner/{ownerAddress}:
  *   get:
  *     summary: Get downloads by owner
  *     tags: [Downloads]
@@ -124,7 +128,7 @@ export default router;
 
 /**
  * @swagger
- * /downloads/token/{tokenId}:
+ * /downloads/getById/{tokenId}:
  *   get:
  *     summary: Get downloads by token ID
  *     tags: [Downloads]
@@ -160,7 +164,7 @@ export default router;
 
 /**
  * @swagger
- * /downloads/type/{type}:
+ * /downloads/getByType/{type}:
  *   get:
  *     summary: Get downloads by type
  *     tags: [Downloads]
@@ -196,7 +200,7 @@ export default router;
 
 /**
  * @swagger
- * /downloads/owner/{ownerAddress}:
+ * /downloads/deleteByOwner/{ownerAddress}:
  *   delete:
  *     summary: Delete downloads by owner
  *     tags: [Downloads]
@@ -224,7 +228,7 @@ export default router;
 
 /**
  * @swagger
- * /downloads/token/{tokenId}:
+ * /downloads/deleteById/{tokenId}:
  *   delete:
  *     summary: Delete downloads by token ID
  *     tags: [Downloads]
@@ -252,7 +256,7 @@ export default router;
 
 /**
  * @swagger
- * /downloads/type/{type}:
+ * /downloads/deleteByType/{type}:
  *   delete:
  *     summary: Delete downloads by type
  *     tags: [Downloads]

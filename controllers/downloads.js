@@ -26,7 +26,7 @@ export const getDownloadsByOwner = async (req, res) => {
     const { ownerAddress } = req.params;
     try {
         const items = await Downloads.find({ ownerAddress });
-        return items;
+        res.json(items);
     } catch (error) {
         console.error(error);
         throw new Error("Error fetching items by owner");
@@ -37,7 +37,7 @@ export const getDownloadsByTokenId = async (req, res) => {
     const { tokenId } = req.params;
     try {
         const items = await Downloads.find({ tokenId });
-        return items;
+        res.json(items);
     } catch (error) {
         console.error(error);
         throw new Error("Error fetching items by token ID");
@@ -48,7 +48,7 @@ export const getDownloadsByTokenType = async (req, res) => {
     const { type } = req.params;
     try {
         const items = await Downloads.find({ type });
-        return items;
+        res.json(items);
     } catch (error) {
         console.error(error);
         throw new Error("Error fetching items by Horse type");
