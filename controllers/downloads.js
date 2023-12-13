@@ -2,8 +2,8 @@ import Downloads from "../models/downloads.js";
 
 export const insertDownload = async (req, res) => {
     try {
-        const { ownerAddress, tokenId } = req.body;
-        const download = new Downloads({ ownerAddress, tokenId });
+        const { ownerAddress, tokenId, type } = req.body;
+        const download = new Downloads({ ownerAddress, tokenId, type });
         await download.save();
         res.status(201).json({ message: "Download data saved successfully" });
     } catch (error) {
@@ -44,6 +44,17 @@ export const getDownloadsByTokenId = async (req, res) => {
     }
 };
 
+export const getDownloadsByTokenType = async (req, res) => {
+    const { type } = req.params;
+    try {
+        const items = await Downloads.find({ type });
+        return items;
+    } catch (error) {
+        console.error(error);
+        throw new Error("Error fetching items by Horse type");
+    }
+};
+
 export const deleteDownloadsByOwner = async (req, res) => {
     const { ownerAddress } = req.params;
     try {
@@ -61,6 +72,17 @@ export const deleteDownloadsByTokenId = async (req, res) => {
     const { tokenId } = req.params;
     try {
         await Downloads.deleteMany({ tokenId });
+        res.json({ message: "Downloads deleted successfully for token ID" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const deleteDownloadsByType = async (req, res) => {
+    const { type } = req.params;
+    try {
+        await Downloads.deleteMany({ type });
         res.json({ message: "Downloads deleted successfully for token ID" });
     } catch (error) {
         console.error(error);
