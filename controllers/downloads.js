@@ -51,10 +51,10 @@ export const insertDownload = async (req, res) => {
 // Helper function to get download URL based on the type
 const getDownloadUrl = (type) => {
     const typeToUrlMapping = {
-        Arab: "https://drive.google.com/file/d/1Sm0-OBZla5X1_llmzUdw_Nev7iEki_jo/view",
-        Luna: "https://drive.google.com/file/d/1lZb1GNDgf8WkBPFxCAQjDJRXjw2tH2AR/view",
-        Nuna: "https://drive.google.com/file/d/1TZffUP_UvdC44QwS4F52v_TlKQt65_Yz/view",
-        Buddy: "https://drive.google.com/file/d/16rS8Cghxweym5dWin3JtcU2uVB6LDNmo/view",
+        Arab: "https://drive.google.com/u/0/uc?id=1Sm0-OBZla5X1_llmzUdw_Nev7iEki_jo&export=download",
+        Luna: "https://drive.google.com/u/0/uc?id=1lZb1GNDgf8WkBPFxCAQjDJRXjw2tH2AR&export=download",
+        Nuna: "https://drive.google.com/u/0/uc?id=1TZffUP_UvdC44QwS4F52v_TlKQt65_Yz&export=download",
+        Buddy: "https://drive.google.com/u/0/uc?id=16rS8Cghxweym5dWin3JtcU2uVB6LDNmo&export=download",
     };
 
     return typeToUrlMapping[type] || null; // Return null if type is not found
@@ -136,5 +136,3 @@ export const deleteDownloadsByType = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
-export const downloadDataByType = async (req, res) => {};

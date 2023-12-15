@@ -23,22 +23,12 @@ router.delete("/deleteByType/:type", deleteDownloadsByType);
 
 export default router;
 
-// ALCHEMY_API=vpEAMGP_rB7ZhU43ybQC6agpdVToaV5S
-
-
-/**
- * @swagger
- * tags:
- *   name: Downloads
- *   description: API endpoints for managing download data
- */
-
 /**
  * @swagger
  * /downloads:
  *   post:
- *     summary: Insert download data
- *     tags: [Downloads]
+ *     summary: Insert a new download record
+ *     description: Insert a new download record with signature verification.
  *     requestBody:
  *       required: true
  *       content:
@@ -52,232 +42,266 @@ export default router;
  *                 type: string
  *               type:
  *                 type: string
+ *               signature:
+ *                 type: string
+ *               message:
+ *                 type: string
  *     responses:
- *       '201':
+ *       201:
  *         description: Download data saved successfully
  *         content:
  *           application/json:
- *             example:
- *               message: Download data saved successfully
- *       '500':
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 downloadUrl:
+ *                   type: string
+ *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
- *             example:
- *               error: Internal Server Error
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 
 /**
  * @swagger
  * /downloads:
  *   get:
- *     summary: Get all download data
- *     tags: [Downloads]
+ *     summary: Get all download records
  *     responses:
- *       '200':
- *         description: OK
+ *       200:
+ *         description: Returns an array of download records
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Download'
- *       '500':
+ *                 $ref: '#/components/schemas/Downloads'
+ *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
- *             example:
- *               error: Internal Server Error
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 
 /**
  * @swagger
- * /downloads/getByOwner/{ownerAddress}:
+ * /downloads/{ownerAddress}:
  *   get:
- *     summary: Get downloads by owner
- *     tags: [Downloads]
+ *     summary: Get all download records by owner address
  *     parameters:
  *       - in: path
  *         name: ownerAddress
- *         required: true
- *         description: Owner's address
  *         schema:
  *           type: string
+ *         required: true
+ *         description: Owner address for filtering downloads
  *     responses:
- *       '200':
- *         description: OK
+ *       200:
+ *         description: Returns an array of download records filtered by owner address
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Download'
- *       '500':
+ *                 $ref: '#/components/schemas/Downloads'
+ *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
- *             example:
- *               error: Internal Server Error
- *       '404':
- *         description: Not Found
- *         content:
- *           application/json:
- *             example:
- *               error: Error fetching items by owner
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 
 /**
  * @swagger
- * /downloads/getById/{tokenId}:
+ * /downloads/{tokenId}:
  *   get:
- *     summary: Get downloads by token ID
- *     tags: [Downloads]
+ *     summary: Get all download records by token ID
  *     parameters:
  *       - in: path
  *         name: tokenId
- *         required: true
- *         description: Token ID
  *         schema:
  *           type: string
+ *         required: true
+ *         description: Token ID for filtering downloads
  *     responses:
- *       '200':
- *         description: OK
+ *       200:
+ *         description: Returns an array of download records filtered by token ID
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Download'
- *       '500':
+ *                 $ref: '#/components/schemas/Downloads'
+ *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
- *             example:
- *               error: Internal Server Error
- *       '404':
- *         description: Not Found
- *         content:
- *           application/json:
- *             example:
- *               error: Error fetching items by token ID
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 
 /**
  * @swagger
- * /downloads/getByType/{type}:
+ * /downloads/type/{type}:
  *   get:
- *     summary: Get downloads by type
- *     tags: [Downloads]
+ *     summary: Get all download records by type
  *     parameters:
  *       - in: path
  *         name: type
- *         required: true
- *         description: Download type
  *         schema:
  *           type: string
+ *         required: true
+ *         description: Type for filtering downloads
  *     responses:
- *       '200':
- *         description: OK
+ *       200:
+ *         description: Returns an array of download records filtered by type
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Download'
- *       '500':
+ *                 $ref: '#/components/schemas/Downloads'
+ *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
- *             example:
- *               error: Internal Server Error
- *       '404':
- *         description: Not Found
- *         content:
- *           application/json:
- *             example:
- *               error: Error fetching items by Horse type
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 
 /**
  * @swagger
- * /downloads/deleteByOwner/{ownerAddress}:
+ * /downloads/{ownerAddress}:
  *   delete:
- *     summary: Delete downloads by owner
- *     tags: [Downloads]
+ *     summary: Delete all download records by owner address
  *     parameters:
  *       - in: path
  *         name: ownerAddress
- *         required: true
- *         description: Owner's address
  *         schema:
  *           type: string
+ *         required: true
+ *         description: Owner address for deleting downloads
  *     responses:
- *       '200':
- *         description: OK
+ *       200:
+ *         description: Downloads deleted successfully for owner address
  *         content:
  *           application/json:
- *             example:
- *               message: Downloads deleted successfully for owner address
- *       '500':
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
- *             example:
- *               error: Internal Server Error
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 
 /**
  * @swagger
- * /downloads/deleteById/{tokenId}:
+ * /downloads/{tokenId}:
  *   delete:
- *     summary: Delete downloads by token ID
- *     tags: [Downloads]
+ *     summary: Delete all download records by token ID
  *     parameters:
  *       - in: path
  *         name: tokenId
- *         required: true
- *         description: Token ID
  *         schema:
  *           type: string
+ *         required: true
+ *         description: Token ID for deleting downloads
  *     responses:
- *       '200':
- *         description: OK
+ *       200:
+ *         description: Downloads deleted successfully for token ID
  *         content:
  *           application/json:
- *             example:
- *               message: Downloads deleted successfully for token ID
- *       '500':
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
- *             example:
- *               error: Internal Server Error
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 
 /**
  * @swagger
- * /downloads/deleteByType/{type}:
+ * /downloads/type/{type}:
  *   delete:
- *     summary: Delete downloads by type
- *     tags: [Downloads]
+ *     summary: Delete all download records by type
  *     parameters:
  *       - in: path
  *         name: type
- *         required: true
- *         description: Download type
  *         schema:
  *           type: string
+ *         required: true
+ *         description: Type for deleting downloads
  *     responses:
- *       '200':
- *         description: OK
+ *       200:
+ *         description: Downloads deleted successfully for type
  *         content:
  *           application/json:
- *             example:
- *               message: Downloads deleted successfully for token ID
- *       '500':
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
- *             example:
- *               error: Internal Server Error
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Downloads:
+ *       type: object
+ *       properties:
+ *         ownerAddress:
+ *           type: string
+ *         tokenId:
+ *           type: string
+ *         type:
+ *           type: string
+ *         downloadUrl:
+ *           type: string
  */
