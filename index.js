@@ -28,8 +28,8 @@ app.use(cors());
 
 app.use("/nfts", nftRoutes);
 app.use("/downloads", downloadRoutes);
-app.use("views", viewsRoutes);
-app.use("favourites", favouritesRoutes);
+app.use("/views", viewsRoutes);
+app.use("/favourites", favouritesRoutes);
 
 app.get("/", (req, res) => res.send("App is running"));
 
