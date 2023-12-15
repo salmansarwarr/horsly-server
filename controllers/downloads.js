@@ -1,17 +1,64 @@
 import Downloads from "../models/downloads.js";
+import { Network, Alchemy } from "alchemy-sdk";
+import dotenv from "dotenv";
+import { ethers } from "ethers";
+
+dotenv.config();
+
+// Optional Config object, but defaults to demo api-key and eth-mainnet.
+const settings = {
+    apiKey: process.env.ALCHEMY_API,
+    network: Network.ETH_SEPOLIA,
+};
+
+const alchemy = new Alchemy(settings);
 
 export const insertDownload = async (req, res) => {
     try {
-        const { ownerAddress, tokenId, type } = req.body;
-        const download = new Downloads({ ownerAddress, tokenId, type });
+        const { ownerAddress, tokenId, type, signature, message } = req.body;
+
+        const recoveredAddress = await ethers.verifyMessage(
+            message,
+            signature
+        );
+
+        // Step 2: Compare ownerAddress and recoveredAddress (converted to lowercase)
+        if (ownerAddress.toLowerCase() !== recoveredAddress.toLowerCase()) {
+            throw new Error("Signature verification failed");
+        }
+
+        // Step 3: Select the download URL from download-type object store and save the download data
+        const downloadUrl = getDownloadUrl(type);
+        const download = new Downloads({
+            ownerAddress,
+            tokenId,
+            type,
+            downloadUrl,
+        });
         await download.save();
-        res.status(201).json({ message: "Download data saved successfully" });
+
+        // Step 6: Return the selected PDF URL in the response
+        res.status(201).json({
+            message: "Download data saved successfully",
+            downloadUrl,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
+// Helper function to get download URL based on the type
+const getDownloadUrl = (type) => {
+    const typeToUrlMapping = {
+        Arab: "https://drive.google.com/file/d/1Sm0-OBZla5X1_llmzUdw_Nev7iEki_jo/view",
+        Luna: "https://drive.google.com/file/d/1lZb1GNDgf8WkBPFxCAQjDJRXjw2tH2AR/view",
+        Nuna: "https://drive.google.com/file/d/1TZffUP_UvdC44QwS4F52v_TlKQt65_Yz/view",
+        Buddy: "https://drive.google.com/file/d/16rS8Cghxweym5dWin3JtcU2uVB6LDNmo/view",
+    };
+
+    return typeToUrlMapping[type] || null; // Return null if type is not found
+};
 export const getAllDownloads = async (req, res) => {
     try {
         const downloadData = await Downloads.find();
@@ -89,3 +136,5 @@ export const deleteDownloadsByType = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+export const downloadDataByType = async (req, res) => {};
