@@ -26,9 +26,9 @@ export const insertDownload = async (req, res) => {
         if (ownerAddress.toLowerCase() !== recoveredAddress.toLowerCase()) {
             throw new Error("Signature verification failed");
         }
-
+        
         // Step 3: Select the download URL from download-type object store and save the download data
-        const downloadUrl = getDownloadUrl(type);
+        const downloadUrl = getDownloadUrl(type.toLowerCase());
         const download = new Downloads({
             ownerAddress,
             tokenId,
@@ -51,14 +51,15 @@ export const insertDownload = async (req, res) => {
 // Helper function to get download URL based on the type
 const getDownloadUrl = (type) => {
     const typeToUrlMapping = {
-        Arab: "https://drive.google.com/u/0/uc?id=1Sm0-OBZla5X1_llmzUdw_Nev7iEki_jo&export=download",
-        Luna: "https://drive.google.com/u/0/uc?id=1lZb1GNDgf8WkBPFxCAQjDJRXjw2tH2AR&export=download",
-        Nuna: "https://drive.google.com/u/0/uc?id=1TZffUP_UvdC44QwS4F52v_TlKQt65_Yz&export=download",
-        Buddy: "https://drive.google.com/u/0/uc?id=16rS8Cghxweym5dWin3JtcU2uVB6LDNmo&export=download",
+        arab: "https://drive.google.com/u/0/uc?id=1Sm0-OBZla5X1_llmzUdw_Nev7iEki_jo&export=download",
+        luna: "https://drive.google.com/u/0/uc?id=1lZb1GNDgf8WkBPFxCAQjDJRXjw2tH2AR&export=download",
+        nuna: "https://drive.google.com/u/0/uc?id=1TZffUP_UvdC44QwS4F52v_TlKQt65_Yz&export=download",
+        buddy: "https://drive.google.com/u/0/uc?id=16rS8Cghxweym5dWin3JtcU2uVB6LDNmo&export=download",
     };
 
     return typeToUrlMapping[type] || null; // Return null if type is not found
 };
+
 export const getAllDownloads = async (req, res) => {
     try {
         const downloadData = await Downloads.find();
