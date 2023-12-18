@@ -27,7 +27,7 @@ export const insertDownload = async (req, res) => {
         // Verification for owned nft
         const ownedURL = `https://horsly-server.vercel.app/nfts/${contractAddress}/${tokenId}`;
         const response = await fetch(ownedURL);
-        const { data } = await response.json();
+        const data = await response.json();
         if (
             data?.mint?.mintAddress.toLowerCase() !== ownerAddress.toLowerCase()
         ) {
