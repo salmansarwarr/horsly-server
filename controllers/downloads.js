@@ -31,7 +31,7 @@ export const insertDownload = async (req, res) => {
         if (
             data?.mint?.mintAddress.toLowerCase() !== ownerAddress.toLowerCase()
         ) {
-            throw new Error("Signature verification failed");
+            throw new Error(data?.mint?.mintAddress.toLowerCase());
         }
 
         // Step 3: Select the download URL from download-type object store and save the download data
@@ -51,7 +51,7 @@ export const insertDownload = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error });
     }
 };
 
