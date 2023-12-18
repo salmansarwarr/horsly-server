@@ -15,7 +15,14 @@ const alchemy = new Alchemy(settings);
 
 export const insertDownload = async (req, res) => {
     try {
-        const { ownerAddress, tokenId, type, signature, message, contractAddress } = req.body;
+        const {
+            ownerAddress,
+            tokenId,
+            type,
+            signature,
+            message,
+            contractAddress,
+        } = req.body;
 
         const recoveredAddress = await ethers.verifyMessage(message, signature);
 
@@ -51,7 +58,7 @@ export const insertDownload = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error });
+        res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
