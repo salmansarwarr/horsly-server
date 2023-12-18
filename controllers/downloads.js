@@ -17,16 +17,23 @@ export const insertDownload = async (req, res) => {
     try {
         const { ownerAddress, tokenId, type, signature, message } = req.body;
 
-        const recoveredAddress = await ethers.verifyMessage(
-            message,
-            signature
-        );
+        const recoveredAddress = await ethers.verifyMessage(message, signature);
 
         // Step 2: Compare ownerAddress and recoveredAddress (converted to lowercase)
         if (ownerAddress.toLowerCase() !== recoveredAddress.toLowerCase()) {
             throw new Error("Signature verification failed");
         }
-        
+
+        // Verification for owned nft
+        const ownedURL = `https://horsly-server.vercel.app/nfts/${contractAddress}/${tokenId}`;
+        const response = await fetch(ownedURL);
+        const { data } = await response.json();
+        if (
+            data?.mint?.mintAddress.toLowerCase() !== ownerAddress.toLowerCase()
+        ) {
+            throw new Error("Signature verification failed");
+        }
+
         // Step 3: Select the download URL from download-type object store and save the download data
         const downloadUrl = getDownloadUrl(type.toLowerCase());
         const download = new Downloads({
