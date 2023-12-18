@@ -15,7 +15,7 @@ const alchemy = new Alchemy(settings);
 
 export const insertDownload = async (req, res) => {
     try {
-        const { ownerAddress, tokenId, type, signature, message } = req.body;
+        const { ownerAddress, tokenId, type, signature, message, contractAddress } = req.body;
 
         const recoveredAddress = await ethers.verifyMessage(message, signature);
 
@@ -27,11 +27,11 @@ export const insertDownload = async (req, res) => {
         // Verification for owned nft
         const ownedURL = `https://horsly-server.vercel.app/nfts/${contractAddress}/${tokenId}`;
         const response = await fetch(ownedURL);
-        const data = await response.json();
+        const { data } = await response.json();
         if (
             data?.mint?.mintAddress.toLowerCase() !== ownerAddress.toLowerCase()
         ) {
-            throw new Error(data);
+            throw new Error("Signature verification failed");
         }
 
         // Step 3: Select the download URL from download-type object store and save the download data
