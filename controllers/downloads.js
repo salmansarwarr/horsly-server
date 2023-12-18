@@ -31,7 +31,7 @@ export const insertDownload = async (req, res) => {
         if (
             data?.mint?.mintAddress.toLowerCase() !== ownerAddress.toLowerCase()
         ) {
-            throw new Error(data?.mint?.mintAddress.toLowerCase());
+            throw new Error(data);
         }
 
         // Step 3: Select the download URL from download-type object store and save the download data
