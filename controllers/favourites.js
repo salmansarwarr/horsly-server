@@ -1,4 +1,5 @@
 import FavouritesModel from "../models/favourites.js";
+import OwnerFavouritesModel from "../models/ownerFavourites.js";
 
 const getAllFavourites = async (req, res) => {
     try {
@@ -35,11 +36,11 @@ const getFavouritesByType = async (req, res) => {
 };
 
 const addFavourites = async (req, res) => {
-    const { ownerAddress , tokenId, type, isFavourite } = req.body;
+    const { ownerAddress, tokenId, type, isFavourite } = req.body;
 
-    if (!tokenId || !type) {
+    if (!tokenId) {
         return res.status(400).json({
-            error: "tokenId, type are required fields",
+            error: "tokenId is required field",
         });
     }
 
@@ -47,27 +48,42 @@ const addFavourites = async (req, res) => {
         // Try to find an existing document with the given tokenId
         const existingFavourites = await FavouritesModel.findOne({ tokenId });
 
+        const ownedFavourite = await OwnerFavouritesModel.findOne({
+            ownerAddress,
+            tokenId,
+        });
+
         if (existingFavourites) {
             // If the document exists, update its favourites
             if (isFavourite == true) {
-                existingFavourites.favourites =
-                    existingFavourites.favourites + 1;
+                existingFavourites.favourites = existingFavourites.favourites + 1;
+
+                ownedFavourite.isFavourite = true;
+                
             } else if (existingFavourites.favourites > 0) {
-                existingFavourites.favourites =
-                    existingFavourites.favourites - 1;
+                existingFavourites.favourites = existingFavourites.favourites - 1;
+
+                ownedFavourite.isFavourite = false;
             }
             const updatedFavourites = await existingFavourites.save();
-            res.status(200).json(updatedFavourites);
+            const updatedOwnedFavourites = await ownedFavourite.save();
+            res.status(200).json(updatedFavourites, updatedOwnedFavourites);
         } else {
             // If the document doesn't exist, create a new one
             const newFavourites = new FavouritesModel({
                 tokenId,
                 type,
                 favourites: 1,
-                ownerAddress
+                ownerAddress,
             });
+            const newOwnedFavourite = new FavouritesModel({
+                ownerAddress,
+                tokenId,
+                isFavourite: true
+            })
             const savedFavourites = await newFavourites.save();
-            res.status(201).json(savedFavourites);
+            const savedOwnedFavourites = await newOwnedFavourite.save();
+            res.status(201).json(savedFavourites, savedOwnedFavourites);
         }
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
@@ -85,12 +101,12 @@ const isFavouritedByOwner = async (req, res) => {
 
     try {
         // Check if there is a document with the given tokenId and ownerAddress
-        const existingFavourites = await FavouritesModel.findOne({
+        const existingFavourites = await OwnerFavouritesModel.findOne({
             tokenId,
             ownerAddress,
         });
 
-        if (existingFavourites) {
+        if (existingFavourites && existingFavourites.isFavourite == true) {
             // The owner has favorited the tokenId
             res.status(200).json({ isFavourited: true });
         } else {
