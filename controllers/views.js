@@ -25,9 +25,9 @@ const getViewsByTokenId = async (req, res) => {
 };
 
 const addViews = async (req, res) => {
-    const { tokenId, type, views } = req.body;
+    const { tokenId, type } = req.body;
 
-    if (!tokenId || !type || !views) {
+    if (!tokenId || !type) {
         return res
             .status(400)
             .json({ error: "tokenId, type, and views are required fields" });
@@ -39,12 +39,12 @@ const addViews = async (req, res) => {
 
         if (existingViews) {
             // If the document exists, update its views
-            existingViews.views = views;
+            existingViews.views += 1;
             const updatedViews = await existingViews.save();
             res.status(200).json(updatedViews);
         } else {
             // If the document doesn't exist, create a new one
-            const newViews = new ViewsModel({ tokenId, type, views });
+            const newViews = new ViewsModel({ tokenId, type, views: 1 });
             const savedViews = await newViews.save();
             res.status(201).json(savedViews);
         }
@@ -52,6 +52,7 @@ const addViews = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 
 const getViewsByType = async (req, res) => {
     const { type } = req.params;

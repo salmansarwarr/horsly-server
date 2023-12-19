@@ -35,9 +35,9 @@ const getFavouritesByType = async (req, res) => {
 };
 
 const addFavourites = async (req, res) => {
-    const { tokenId, type, favourites } = req.body;
+    const { tokenId, type, isFavourite } = req.body;
 
-    if (!tokenId || !type || !favourites) {
+    if (!tokenId || !type) {
         return res
             .status(400)
             .json({
@@ -51,7 +51,11 @@ const addFavourites = async (req, res) => {
 
         if (existingFavourites) {
             // If the document exists, update its favourites
-            existingFavourites.favourites = favourites;
+            if(isFavourite) {
+                existingFavourites.favourites += 1;
+            } else {
+                existingFavourites.favourites -= 1;   
+            }
             const updatedFavourites = await existingFavourites.save();
             res.status(200).json(updatedFavourites);
         } else {
@@ -59,7 +63,7 @@ const addFavourites = async (req, res) => {
             const newFavourites = new FavouritesModel({
                 tokenId,
                 type,
-                favourites,
+                favourites: 1,
             });
             const savedFavourites = await newFavourites.save();
             res.status(201).json(savedFavourites);
