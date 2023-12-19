@@ -73,6 +73,34 @@ const addFavourites = async (req, res) => {
     }
 };
 
+const isFavouritedByOwner = async (req, res) => {
+    const { tokenId, ownerAddress } = req.params;
+
+    if (!tokenId || !ownerAddress) {
+        return res.status(400).json({
+            error: "tokenId, ownerAddress are required fields",
+        });
+    }
+
+    try {
+        // Check if there is a document with the given tokenId and ownerAddress
+        const existingFavourites = await FavouritesModel.findOne({
+            tokenId,
+            ownerAddress,
+        });
+
+        if (existingFavourites) {
+            // The owner has favorited the tokenId
+            res.status(200).json({ isFavourited: true });
+        } else {
+            // The owner has not favorited the tokenId
+            res.status(200).json({ isFavourited: false });
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
 
 
 export {
@@ -80,4 +108,5 @@ export {
     getFavouritesByTokenId,
     getFavouritesByType,
     addFavourites,
+    isFavouritedByOwner
 };
