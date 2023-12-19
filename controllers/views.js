@@ -34,9 +34,20 @@ const addViews = async (req, res) => {
     }
 
     try {
-        const newViews = new ViewsModel({ tokenId, type, views });
-        const savedViews = await newViews.save();
-        res.status(201).json(savedViews);
+        // Try to find an existing document with the given tokenId
+        const existingViews = await ViewsModel.findOne({ tokenId });
+
+        if (existingViews) {
+            // If the document exists, update its views
+            existingViews.views = views;
+            const updatedViews = await existingViews.save();
+            res.status(200).json(updatedViews);
+        } else {
+            // If the document doesn't exist, create a new one
+            const newViews = new ViewsModel({ tokenId, type, views });
+            const savedViews = await newViews.save();
+            res.status(201).json(savedViews);
+        }
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
     }
