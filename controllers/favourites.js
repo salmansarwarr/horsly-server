@@ -41,7 +41,7 @@ const addFavourites = async (req, res) => {
         return res
             .status(400)
             .json({
-                error: "tokenId, type, and favourites are required fields",
+                error: "tokenId, type are required fields",
             });
     }
 
@@ -51,10 +51,10 @@ const addFavourites = async (req, res) => {
 
         if (existingFavourites) {
             // If the document exists, update its favourites
-            if(isFavourite) {
-                existingFavourites.favourites += 1;
+            if(isFavourite == true) {
+                existingFavourites.favourites = existingFavourites.favourites + 1;
             } else {
-                existingFavourites.favourites -= 1;   
+                existingFavourites.favourites = existingFavourites.favourites - 1;   
             }
             const updatedFavourites = await existingFavourites.save();
             res.status(200).json(updatedFavourites);
@@ -72,6 +72,7 @@ const addFavourites = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 
 
 export {
