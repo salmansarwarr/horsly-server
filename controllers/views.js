@@ -27,10 +27,10 @@ const getViewsByTokenId = async (req, res) => {
 const addViews = async (req, res) => {
     const { tokenId, type } = req.body;
 
-    if (!tokenId || !type) {
+    if (!tokenId) {
         return res
             .status(400)
-            .json({ error: "tokenId, type, and views are required fields" });
+            .json({ error: "tokenId is required fields" });
     }
 
     try {
