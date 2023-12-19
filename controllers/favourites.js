@@ -46,17 +46,29 @@ const addFavourites = async (req, res) => {
     }
 
     try {
-        const newFavourites = new FavouritesModel({
-            tokenId,
-            type,
-            favourites,
-        });
-        const savedFavourites = await newFavourites.save();
-        res.status(201).json(savedFavourites);
+        // Try to find an existing document with the given tokenId
+        const existingFavourites = await FavouritesModel.findOne({ tokenId });
+
+        if (existingFavourites) {
+            // If the document exists, update its favourites
+            existingFavourites.favourites = favourites;
+            const updatedFavourites = await existingFavourites.save();
+            res.status(200).json(updatedFavourites);
+        } else {
+            // If the document doesn't exist, create a new one
+            const newFavourites = new FavouritesModel({
+                tokenId,
+                type,
+                favourites,
+            });
+            const savedFavourites = await newFavourites.save();
+            res.status(201).json(savedFavourites);
+        }
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 
 export {
     getAllFavourites,
