@@ -38,11 +38,9 @@ const addFavourites = async (req, res) => {
     const { tokenId, type, isFavourite } = req.body;
 
     if (!tokenId || !type) {
-        return res
-            .status(400)
-            .json({
-                error: "tokenId, type are required fields",
-            });
+        return res.status(400).json({
+            error: "tokenId, type are required fields",
+        });
     }
 
     try {
@@ -51,10 +49,12 @@ const addFavourites = async (req, res) => {
 
         if (existingFavourites) {
             // If the document exists, update its favourites
-            if(isFavourite == true) {
-                existingFavourites.favourites = existingFavourites.favourites + 1;
-            } else {
-                existingFavourites.favourites = existingFavourites.favourites - 1;   
+            if (isFavourite == true) {
+                existingFavourites.favourites =
+                    existingFavourites.favourites + 1;
+            } else if (existingFavourites.favourites > 0) {
+                existingFavourites.favourites =
+                    existingFavourites.favourites - 1;
             }
             const updatedFavourites = await existingFavourites.save();
             res.status(200).json(updatedFavourites);
@@ -101,12 +101,10 @@ const isFavouritedByOwner = async (req, res) => {
     }
 };
 
-
-
 export {
     getAllFavourites,
     getFavouritesByTokenId,
     getFavouritesByType,
     addFavourites,
-    isFavouritedByOwner
+    isFavouritedByOwner,
 };
