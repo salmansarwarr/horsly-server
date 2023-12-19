@@ -35,7 +35,7 @@ const getFavouritesByType = async (req, res) => {
 };
 
 const addFavourites = async (req, res) => {
-    const { tokenId, type, isFavourite } = req.body;
+    const { ownerAddress , tokenId, type, isFavourite } = req.body;
 
     if (!tokenId || !type) {
         return res.status(400).json({
@@ -64,6 +64,7 @@ const addFavourites = async (req, res) => {
                 tokenId,
                 type,
                 favourites: 1,
+                ownerAddress
             });
             const savedFavourites = await newFavourites.save();
             res.status(201).json(savedFavourites);
