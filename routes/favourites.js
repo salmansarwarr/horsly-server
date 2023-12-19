@@ -14,7 +14,7 @@ router.get("/", getAllFavourites);
 router.get("/:tokenId", getFavouritesByTokenId);
 router.get("/type/:type", getFavouritesByType);
 router.post("/", addFavourites);
-router.get("/isFavourite/:tokenId/:ownerAddress", isFavouritedByOwner);
+router.get("/:tokenId/:ownerAddress", isFavouritedByOwner);
 
 export default router;
 
