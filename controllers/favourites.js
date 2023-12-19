@@ -56,18 +56,13 @@ const addFavourites = async (req, res) => {
         if (existingFavourites) {
             // If the document exists, update its favourites
             if (isFavourite == true) {
-                existingFavourites.favourites = existingFavourites.favourites + 1;
-
-                ownedFavourite.isFavourite = true;
-                
+                existingFavourites.favourites =
+                    existingFavourites.favourites + 1;
             } else if (existingFavourites.favourites > 0) {
-                existingFavourites.favourites = existingFavourites.favourites - 1;
-
-                ownedFavourite.isFavourite = false;
+                existingFavourites.favourites =
+                    existingFavourites.favourites - 1;
             }
-            const updatedFavourites = await existingFavourites.save();
-            const updatedOwnedFavourites = await ownedFavourite.save();
-            res.status(200).json(updatedFavourites, updatedOwnedFavourites);
+            await existingFavourites.save();
         } else {
             // If the document doesn't exist, create a new one
             const newFavourites = new FavouritesModel({
@@ -76,15 +71,27 @@ const addFavourites = async (req, res) => {
                 favourites: 1,
                 ownerAddress,
             });
-            const newOwnedFavourite = new FavouritesModel({
+
+            await newFavourites.save();
+        }
+
+        if (ownedFavourite) {
+            if (isFavourite == true) {
+                ownedFavourite.isFavourite = true;
+            } else {
+                ownedFavourite.isFavourite = false;
+            }
+            await ownedFavourite.save();
+        } else {
+            const newOwnedFavourite = new OwnerFavouritesModel({
                 ownerAddress,
                 tokenId,
-                isFavourite: true
-            })
-            const savedFavourites = await newFavourites.save();
-            const savedOwnedFavourites = await newOwnedFavourite.save();
-            res.status(201).json(savedFavourites, savedOwnedFavourites);
+                isFavourite: true,
+            });
+            await newOwnedFavourite.save();
         }
+
+        res.status(200).json({ message: "Favourite posted successfully" });
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
     }
