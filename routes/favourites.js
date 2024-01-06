@@ -5,15 +5,17 @@ import {
     getFavouritesByTokenId,
     getFavouritesByType,
     isFavouritedByOwner,
+    getFavouritesByOwner
 } from "../controllers/favourites.js";
 
 const router = express.Router();
 
 // Routes
 router.get("/", getAllFavourites);
-router.get("/:tokenId", getFavouritesByTokenId);
 router.get("/type/:type", getFavouritesByType);
+router.get("/:tokenId", getFavouritesByTokenId);
 router.post("/", addFavourites);
+router.get('/byOwner/:ownerAddress', getFavouritesByOwner);
 router.get("/:tokenId/:ownerAddress", isFavouritedByOwner);
 
 export default router;

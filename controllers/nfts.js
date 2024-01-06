@@ -45,3 +45,21 @@ export const getNftDetails = async (req, res) => {
         });
     }
 };
+
+export const getMintedNftsForContract = async (req, res) => {
+    const { contractAddress } = req.params;
+
+    try {
+        const nfts = await alchemy.nft.getNftsForContract(contractAddress);
+
+        res.status(200).json({
+            data: nfts
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: error,
+        });
+    }
+};
+
+
