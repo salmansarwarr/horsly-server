@@ -2,6 +2,8 @@ import Downloads from "../models/downloads.js";
 import { Network, Alchemy } from "alchemy-sdk";
 import dotenv from "dotenv";
 import { ethers } from "ethers";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 dotenv.config();
 
@@ -12,6 +14,14 @@ const settings = {
 };
 
 const alchemy = new Alchemy(settings);
+
+const s3Client = new S3Client({
+    region: "us-east-1",
+    credentials: {
+        accessKeyId: process.env.ACCESS_KEY_ID,
+        secretAccessKey: process.env.SECRET,
+    },
+});
 
 export const insertDownload = async (req, res) => {
     try {
@@ -33,10 +43,10 @@ export const insertDownload = async (req, res) => {
 
         // Verification for owned nft
         const ownedURL = `https://horsly-server.vercel.app/nfts/${contractAddress}/${tokenId}`;
-       
+
         const response = await fetch(ownedURL);
         const { data } = await response.json();
-     
+
         if (
             data?.mint?.mintAddress.toLowerCase() !== ownerAddress.toLowerCase()
         ) {
@@ -64,16 +74,19 @@ export const insertDownload = async (req, res) => {
     }
 };
 
-// Helper function to get download URL based on the type
-const getDownloadUrl = (type) => {
-    const typeToUrlMapping = {
-        arab: "https://drive.google.com/u/0/uc?id=1Sm0-OBZla5X1_llmzUdw_Nev7iEki_jo&export=download",
-        luna: "https://drive.google.com/u/0/uc?id=1lZb1GNDgf8WkBPFxCAQjDJRXjw2tH2AR&export=download",
-        nuna: "https://drive.google.com/u/0/uc?id=1TZffUP_UvdC44QwS4F52v_TlKQt65_Yz&export=download",
-        buddy: "https://drive.google.com/u/0/uc?id=16rS8Cghxweym5dWin3JtcU2uVB6LDNmo&export=download",
-    };
+// Helper function to get downrload URL based on the type
+const getDownloadUrl = async (key) => {
+    const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1);
+    const finalKey = capitalizedKey + ".pdf";
 
-    return typeToUrlMapping[type] || null; // Return null if type is not found
+    const command = new GetObjectCommand({
+        Bucket: 'nftproyect',
+        Key: finalKey,
+    })
+    
+    const url = await getSignedUrl(s3Client, command, {expiresIn: 60});
+    
+    return url;
 };
 
 export const getAllDownloads = async (req, res) => {
