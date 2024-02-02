@@ -54,7 +54,7 @@ export const insertDownload = async (req, res) => {
         }
 
         // Step 3: Select the download URL from download-type object store and save the download data
-        const downloadUrl = getDownloadUrl(type.toLowerCase());
+        const downloadUrl = await getDownloadUrl(type.toLowerCase());
         const download = new Downloads({
             ownerAddress,
             tokenId,
