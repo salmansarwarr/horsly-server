@@ -84,9 +84,9 @@ const getDownloadUrl = async (key) => {
         Key: finalKey,
     })
     
-    const url = await getSignedUrl(s3Client, command, {expiresIn: 60});
+    const url = await getSignedUrl(s3Client, command, {expiresIn: 20});
     
-    return url;
+    return encodeURI(url);
 };
 
 export const getAllDownloads = async (req, res) => {
