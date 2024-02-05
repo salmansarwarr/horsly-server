@@ -45,7 +45,7 @@ const addFavourites = async (req, res) => {
 
     try {
         // Try to find an existing document with the given tokenId
-        const existingFavourites = await FavouritesModel.findOne({ tokenId });
+        const existingFavourites = await FavouritesModel.findOne({ tokenId, ownerAddress });
 
         if (existingFavourites) {
             // If the document exists, update its favourites
