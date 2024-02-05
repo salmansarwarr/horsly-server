@@ -35,11 +35,11 @@ const getFavouritesByType = async (req, res) => {
 };
 
 const addFavourites = async (req, res) => {
-    const { tokenId, type, isFavourite } = req.body;
+    const { tokenId, type, isFavourite, ownerAddress } = req.body;
 
-    if (!tokenId || !type) {
+    if (!tokenId || !type || !ownerAddress) {
         return res.status(400).json({
-            error: "tokenId, type are required fields",
+            error: "tokenId, type and ownerAddress are required fields",
         });
     }
 
@@ -64,6 +64,7 @@ const addFavourites = async (req, res) => {
                 tokenId,
                 type,
                 favourites: 1,
+                ownerAddress
             });
             const savedFavourites = await newFavourites.save();
             res.status(201).json(savedFavourites);
