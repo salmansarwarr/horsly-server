@@ -80,7 +80,7 @@ const isFavouritedByOwner = async (req, res) => {
     if (!tokenId || !ownerAddress) {
         return res.status(400).json({
             error: "tokenId, ownerAddress are required fields",
-        });
+        }); 
     }
 
     try {

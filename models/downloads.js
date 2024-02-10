@@ -4,6 +4,7 @@ const downloadsSchema = mongoose.Schema({
     ownerAddress: { type: String, require: true },
     tokenId: { type: String, require: true },
     type: { type: String, require: true },
+    downloadUrls: { type: Array, require: true }
 });
 
 export default mongoose.model("downloads", downloadsSchema);

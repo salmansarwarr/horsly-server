@@ -54,19 +54,25 @@ export const insertDownload = async (req, res) => {
         }
 
         // Step 3: Select the download URL from download-type object store and save the download data
-        const downloadUrl = await getDownloadUrl(type.toLowerCase());
+        const urlsArray = await getDownloadUrl(type.toLowerCase());
+        const downloadUrls = urlsArray.map((url, i) => (
+            {
+                name: `${type.toLowerCase()}-${i + 1}`,
+                url
+            }
+        ))
         const download = new Downloads({
             ownerAddress,
             tokenId,
             type,
-            downloadUrl,
+            downloadUrls,
         });
         await download.save();
 
         // Step 6: Return the selected PDF URL in the response
         res.status(201).json({
             message: "Download data saved successfully",
-            downloadUrl,
+            downloadUrls,
         });
     } catch (error) {
         console.error(error);
@@ -76,17 +82,38 @@ export const insertDownload = async (req, res) => {
 
 // Helper function to get downrload URL based on the type
 const getDownloadUrl = async (key) => {
-    const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1);
-    const finalKey = capitalizedKey + ".pdf";
+    let file1, file2, file3, file4
+    
+    if(key.toLowerCase().includes("sparkatto")) {
+        file1 = "Sparkatto-1 of 4-V350163399.gz";
+        file2 = "Sparkatto-2 of 4-V350163399.gz";
+        file3 = "Sparkatto-3 of 4-V350163399.gz";
+        file4 = "Sparkatto-4 of 4-V350163399.gz"
+    }
 
-    const command = new GetObjectCommand({
+    const command1 = new GetObjectCommand({
         Bucket: 'nftproyect',
-        Key: finalKey,
+        Key: file1,
+    })
+    const command2 = new GetObjectCommand({
+        Bucket: 'nftproyect',
+        Key: file2,
+    })
+    const command3 = new GetObjectCommand({
+        Bucket: 'nftproyect',
+        Key: file3,
+    })
+    const command4 = new GetObjectCommand({
+        Bucket: 'nftproyect',
+        Key: file4,
     })
     
-    const url = await getSignedUrl(s3Client, command, {expiresIn: 20});
+    const url1 = await getSignedUrl(s3Client, command1, {expiresIn: 20});
+    const url2 = await getSignedUrl(s3Client, command2, {expiresIn: 20});
+    const url3 = await getSignedUrl(s3Client, command3, {expiresIn: 20});
+    const url4 = await getSignedUrl(s3Client, command4, {expiresIn: 20});
     
-    return encodeURI(url);
+    return [encodeURI(url1), encodeURI(url2), encodeURI(url3), encodeURI(url4)];
 };
 
 export const getAllDownloads = async (req, res) => {
