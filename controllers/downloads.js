@@ -48,7 +48,7 @@ export const insertDownload = async (req, res) => {
         const { data } = await response.json();
 
         if (
-            data?.mint?.mintAddress.toLowerCase() !== ownerAddress.toLowerCase()
+            data?.mint?.mintAddress?.toLowerCase() !== ownerAddress?.toLowerCase()
         ) {
             throw new Error("Signature verification failed");
         }
@@ -88,7 +88,12 @@ const getDownloadUrl = async (key) => {
         file1 = "Sparkatto-1 of 4-V350163399.gz";
         file2 = "Sparkatto-2 of 4-V350163399.gz";
         file3 = "Sparkatto-3 of 4-V350163399.gz";
-        file4 = "Sparkatto-4 of 4-V350163399.gz"
+        file4 = "Sparkatto-4 of 4-V350163399.gz";
+    } else if(key.toLowerCase().includes("quitena") || key.toLowerCase().includes("quiteña")) {
+        file1 = "Quitena-1 of 4-V350163399.gz";
+        file2 = "Quitena-2 of  4-V350163399.gz";
+        file3 = "Quitena-3 of 4-V350163399.gz";
+        file4 = "Quitena-4 of 4-V350163399.gz";
     }
 
     const command1 = new GetObjectCommand({
