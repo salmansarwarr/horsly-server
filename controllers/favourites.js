@@ -9,15 +9,26 @@ const getAllFavourites = async (req, res) => {
     }
 };
 
+// const getFavouritesByTokenId = async (req, res) => {
+//     const { tokenId } = req.params;
+//     try {
+//         const favourites = await FavouritesModel.findOne({ tokenId });
+//         res.status(200).json(favourites);
+//     } catch (error) {
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// };
+
 const getFavouritesByTokenId = async (req, res) => {
     const { tokenId } = req.params;
     try {
-        const favourites = await FavouritesModel.findOne({ tokenId });
-        res.status(200).json(favourites);
+        const favouritesCount = await FavouritesModel.countDocuments({ tokenId });
+        res.status(200).json({ count: favouritesCount });
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 
 const getFavouritesByType = async (req, res) => {
     const { type } = req.params;
@@ -39,7 +50,7 @@ const addFavourites = async (req, res) => {
 
     if (!tokenId || !type || !ownerAddress) {
         return res.status(400).json({
-            error: "tokenId, type and ownerAddress are required fields",
+            error: "tokenId, type and ownerAddress are required fields",    
         });
     }
 
