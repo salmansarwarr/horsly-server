@@ -46,6 +46,7 @@ export const insertDownload = async (req, res) => {
 
         const response = await fetch(ownedURL);
         const { data } = await response.json();
+        console.log(data);
 
         if (
             data?.mint?.mintAddress?.toLowerCase() !== ownerAddress?.toLowerCase()
@@ -113,10 +114,10 @@ const getDownloadUrl = async (key) => {
         Key: file4,
     })
     
-    const url1 = await getSignedUrl(s3Client, command1, {expiresIn: 20});
-    const url2 = await getSignedUrl(s3Client, command2, {expiresIn: 20});
-    const url3 = await getSignedUrl(s3Client, command3, {expiresIn: 20});
-    const url4 = await getSignedUrl(s3Client, command4, {expiresIn: 20});
+    const url1 = await getSignedUrl(s3Client, command1, {expiresIn: 40});
+    const url2 = await getSignedUrl(s3Client, command2, {expiresIn: 40});
+    const url3 = await getSignedUrl(s3Client, command3, {expiresIn: 40});   
+    const url4 = await getSignedUrl(s3Client, command4, {expiresIn: 40});
     
     return [encodeURI(url1), encodeURI(url2), encodeURI(url3), encodeURI(url4)];
 };

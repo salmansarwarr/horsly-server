@@ -44,30 +44,44 @@ const addFavourites = async (req, res) => {
     }
 
     try {
-        // Try to find an existing document with the given tokenId
-        const existingFavourites = await FavouritesModel.findOne({ tokenId, ownerAddress });
-
-        if (existingFavourites) {
-            // If the document exists, update its favourites
-            if (isFavourite == true) {
-                existingFavourites.favourites =
-                    existingFavourites.favourites + 1;
-            } else if (existingFavourites.favourites > 0) {
-                existingFavourites.favourites =
-                    existingFavourites.favourites - 1;
-            }
-            const updatedFavourites = await existingFavourites.save();
-            res.status(200).json(updatedFavourites);
-        } else {
-            // If the document doesn't exist, create a new one
-            const newFavourites = new FavouritesModel({
+        if (isFavourite === true) {
+            let existingFavourites = await FavouritesModel.findOne({
                 tokenId,
-                type,
-                favourites: 1,
-                ownerAddress
+                ownerAddress,
             });
-            const savedFavourites = await newFavourites.save();
-            res.status(201).json(savedFavourites);
+
+            if (existingFavourites) {
+                existingFavourites.favourites += 1;
+                const updatedFavourites = await existingFavourites.save();
+                return res.status(200).json(updatedFavourites);
+            } else {
+                const newFavourites = new FavouritesModel({
+                    tokenId,
+                    type,
+                    favourites: 1,
+                    ownerAddress,
+                });
+                const savedFavourites = await newFavourites.save();
+                return res.status(201).json(savedFavourites);
+            }
+        } else if (isFavourite === false) {
+            // If isFavourite is false, remove the favorite
+            const removedFavourites = await FavouritesModel.findOneAndDelete({
+                tokenId,
+                ownerAddress,
+            });
+
+            if (removedFavourites) {
+                return res
+                    .status(200)
+                    .json({ message: "Favorite removed successfully" });
+            } else {
+                return res.status(404).json({ error: "Favorite not found" });
+            }
+        } else {
+            return res
+                .status(400)
+                .json({ error: "Invalid value for isFavourite" });
         }
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
@@ -80,7 +94,7 @@ const isFavouritedByOwner = async (req, res) => {
     if (!tokenId || !ownerAddress) {
         return res.status(400).json({
             error: "tokenId, ownerAddress are required fields",
-        }); 
+        });
     }
 
     try {
@@ -136,4 +150,3 @@ export {
     isFavouritedByOwner,
     getFavouritesByOwner,
 };
-
